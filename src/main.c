@@ -83,8 +83,5 @@ void app_main(void)
         led_strip_set_pixel(led_strip, 0, 0, 0, 16);
         led_strip_refresh(led_strip);
         vTaskDelay(BLINK_PERIOD / portTICK_PERIOD_MS);
-
-
-
     }
 }

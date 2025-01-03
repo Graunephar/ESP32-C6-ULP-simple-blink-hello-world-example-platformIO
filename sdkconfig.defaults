@@ -1,22 +1,16 @@
 
+
 #General system thingy-madings
+
 #Use esptool.py --chip esp32c6 flash_id to check 
 #the flash size of the board and change this file accordingly
 CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
-
-#
-# Ultra Low Power (ULP) Co-processor
-#
-#CONFIG_ULP_COPROC_ENABLED=y
-#CONFIG_ULP_COPROC_TYPE_LP_CORE=y
-#CONFIG_ULP_COPROC_RESERVE_MEM=4096
-#CONFIG_ULP_SHARED_MEM=0x10
-
 
 # Enable ULP
 CONFIG_ULP_COPROC_ENABLED=y
 CONFIG_ULP_COPROC_TYPE_LP_CORE=y
 CONFIG_ULP_COPROC_RESERVE_MEM=4096
+
 # Set log level to Warning to produce clean output
 CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y
 CONFIG_BOOTLOADER_LOG_LEVEL=2
