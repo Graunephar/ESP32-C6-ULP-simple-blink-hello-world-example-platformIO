@@ -1,11 +1,4 @@
-/* Blink Example from https://github.com/espressif/esp-idf/blob/master/examples/get-started/blink/main/blink_example_main.c
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,6 +6,8 @@
 #include "esp_log.h"
 #include "led_strip.h"
 #include "sdkconfig.h"
+#include "ulp_lp_core.h"
+#include "esp_err.h"
 
 static const char *TAG = "example";
 
@@ -26,9 +21,25 @@ static uint8_t s_led_state = 0;
 
 static led_strip_handle_t led_strip;
 
+extern const uint8_t bin_start[] asm("_binary_ulp_main_bin_start"); //refering to app name ulp_main defined in CMakelists.txt
+extern const uint8_t bin_end[]   asm("_binary_ulp_main_bin_end"); //refering to app name ulp_main defined in CMakelists.txt
 
-static void configure_led(void)
-{
+void start_ulp_program() {
+    // Change: Load the ULP binary into RTC memory
+    ESP_ERROR_CHECK(ulp_lp_core_load_binary(bin_start, (bin_end - bin_start)));
+
+    // Change: Configure the ULP LP core wake-up source and timer
+    ulp_lp_core_cfg_t cfg = {
+        .wakeup_source = ULP_LP_CORE_WAKEUP_SOURCE_LP_TIMER, // Wake up using LP timer
+        .lp_timer_sleep_duration_us = 1000000,              // 1-second sleep duration
+    };
+
+    // Change: Start the ULP LP core program
+    ESP_ERROR_CHECK(ulp_lp_core_run(&cfg));
+}
+
+static void configure_led(void) {
+
     ESP_LOGI(TAG, "Example configured to blink addressable LED!");
     /* LED strip initialization with the GPIO and pixels number*/
     led_strip_config_t strip_config = {
@@ -52,24 +63,24 @@ void app_main(void)
 
     /* Configure the peripheral according to the LED type */
     configure_led();
-
+    start_ulp_program();
 
     //this is by design a very simple main loop to keep the ULP busy but also give it time to sleep. 
     //Kept simple because this loop is not the point of this example
     while (1) {
 
         ESP_LOGI(TAG, "Turning the LED RED");
-        led_strip_set_pixel(led_strip, 0, 255, 0, 0);
+        led_strip_set_pixel(led_strip, 0, 16, 0, 0);
         led_strip_refresh(led_strip);
         vTaskDelay(BLINK_PERIOD / portTICK_PERIOD_MS);
 
         ESP_LOGI(TAG, "Turning the GREEN RED");
-        led_strip_set_pixel(led_strip, 0, 0, 255, 0);
+        led_strip_set_pixel(led_strip, 0, 0, 16, 0);
         led_strip_refresh(led_strip);
         vTaskDelay(BLINK_PERIOD / portTICK_PERIOD_MS);
 
         ESP_LOGI(TAG, "Turning the LED BLUE");
-        led_strip_set_pixel(led_strip, 0, 0, 0, 255);
+        led_strip_set_pixel(led_strip, 0, 0, 0, 16);
         led_strip_refresh(led_strip);
         vTaskDelay(BLINK_PERIOD / portTICK_PERIOD_MS);
 
