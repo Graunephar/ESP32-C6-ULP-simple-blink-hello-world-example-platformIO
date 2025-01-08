@@ -1,5 +1,5 @@
 
-# ESP3-2C6 ULP Blink example
+# ESP32-C6 ULP Blink example
 
 This project is simple hello world example on how to use ULP in PlatformIO with ESP-IDF. If you would like an overview of the different options for Arduino and ESP-IDF in PlatformIO on ESP32-C6. I have an overview of my different example reposoties on (a GitHub Gist that can be found on this link.)[https://gist.github.com/Graunephar/57a9882cb3a2ab98be8d63a59ab16ef3]
  
